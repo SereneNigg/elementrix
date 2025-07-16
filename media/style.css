@@ -744,3 +744,135 @@ body {
         margin: .25rem;
     }
 }
+body {
+    background-image: url('https://elementrix.it/img/background.png');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    position: relative;
+    z-index: 1;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(18, 18, 18, 0.8); /* Dark overlay */
+    z-index: -1;
+}
+
+/* Main Content Area to center the card */
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    width: 100%;
+    min-height: calc(100vh - 80px); /* Adjust '80px' if your navbar height is different */
+    box-sizing: border-box;
+}
+
+/* The Status Card Itself */
+.status-card {
+    background: rgba(30, 30, 30, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 700px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* For Safari support */
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    gap: 15px;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #ffffff;
+}
+
+.server-ip {
+    margin: 0;
+    color: #aaa;
+    font-size: 1rem;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px 15px;
+    border-radius: 20px;
+}
+
+#status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+#status-dot.loading { background-color: #f39c12; } /* Orange */
+#status-dot.online  { background-color: #2ecc71; } /* Green */
+#status-dot.offline { background-color: #e74c3c; } /* Red */
+
+/* Card Body Sections */
+.info-section {
+    margin-bottom: 1.5rem;
+}
+
+.info-section h3 {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #aaa;
+    letter-spacing: 1px;
+}
+
+.info-section p, .player-count {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #f0f0f0;
+}
+
+/* MOTD Styling */
+.motd-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    padding: 15px;
+    font-family: monospace; /* Use a monospace font for proper alignment */
+}
+
+#motd {
+    margin: 0;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    background: transparent;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Error Message */
+#error {
+    color: #e74c3c;
+    text-align: center;
+    padding: 10px;
+    background: rgba(231, 76, 60, 0.1);
+    border-radius: 5px;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
