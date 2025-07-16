@@ -210,6 +210,55 @@
               </div>
             </div>
           </div>
+          <script>
+// --- This script fetches and displays the Minecraft server status ---
+document.addEventListener('DOMContentLoaded', () => {
+    const serverIp = 'play.elementrix.it';
+    const apiUrl = `https://api.mcstatus.io/v2/status/java/${serverIp}`;
+
+    // Get references to all the elements we need to update
+    const statusEl = document.getElementById('status');
+    const statusDot = document.getElementById('status-dot');
+    const playersEl = document.getElementById('players');
+    const versionEl = document.getElementById('version');
+    const motdEl = document.getElementById('motd');
+    const errorEl = document.getElementById('error');
+
+    // Fetch data from the API
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.online) {
+                // --- SERVER IS ONLINE ---
+                statusEl.textContent = 'Online';
+                statusDot.className = 'online';
+
+                playersEl.textContent = `${data.players.online} / ${data.players.max}`;
+                versionEl.textContent = data.version.name_clean;
+                
+                // Use .innerHTML to correctly render colored MOTD from the API
+                motdEl.innerHTML = data.motd.html;
+
+            } else {
+                // --- SERVER IS OFFLINE ---
+                statusEl.textContent = 'Offline';
+                statusDot.className = 'offline';
+                errorEl.style.display = 'block'; // Show the error box
+                playersEl.textContent = 'N/A';
+                versionEl.textContent = 'N/A';
+                motdEl.textContent = 'Server is offline.';
+            }
+        })
+        .catch(error => {
+            // --- API FAILED OR COULD NOT BE REACHED ---
+            console.error('Error fetching Minecraft server status:', error);
+            statusEl.textContent = 'Error';
+            statusDot.className = 'offline';
+            errorEl.style.display = 'block';
+            errorEl.querySelector('p').textContent = 'An error occurred while trying to ping the server.';
+        });
+});
+</script>
         </div>
       </div>
     </div>
