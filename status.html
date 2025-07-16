@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elementrix - Server Status</title>
+    <link rel="icon" type="image/png" href="media/favicon.png">
+    <link rel="stylesheet" href="status.css">
+    <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <nav class="desktop_navbar">
+      <a href="#"><img class="desktop_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <a href="https://elementrix.tebex.io/" class="desktop_navbar_link">Store</a>
+      <a href="#discord" class="desktop_navbar_link scroll">Community</a>
+      <a href="#about" class="desktop_navbar_link scroll">About Us</a>
+      <div class="desktop_navbar_link2_div">
+          <a href="#join" class="desktop_navbar_link2 scroll">Join Us!</a>
+      </div>
+    </nav>
+    <div class="mobile_navbar">
+      <a href="#" class="mobile_navbar_logo_img_a"><img class="mobile_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <div id="mobile_navbar_links">
+          <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="https://wiki.example.com/">Wiki</a>
+          <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="#discord">Community</a>
+          <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="#about">About Us</a>
+          <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="#join">Join Us</a>
+        </div>
+        <div class="icon" onclick="mobile_navbar_link_hider()">
+            <i class="fa fa-bars"></i>
+        </div>
+    </div>
+
+    <main class="content">
+        <div id="server-status-container">
+            <h1>Server Status</h1>
+            <div id="server-info">
+                <p><strong>Status:</strong> <span id="status">Loading...</span></p>
+                <p><strong>Players:</strong> <span id="players">N/A</span></p>
+                <p><strong>Version:</strong> <span id="version">N/A</span></p>
+                <div class="motd-container">
+                    <strong>MOTD:</strong>
+                    <pre id="motd">Loading...</pre>
+                </div>
+            </div>
+            <div id="loading" style="display: none;">
+                <p>Fetching server data...</p>
+            </div>
+            <div id="error" style="display: none;">
+                <p>Could not retrieve server information. The server may be offline or the API is unavailable.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function mobile_navbar_link_hider() {
+            var x = document.getElementById("mobile_navbar_links");
+            if (x.style.display === "flex") {
+                x.style.display = "none";
+            } else {
+                x.style.display = "flex";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const serverIp = 'play.elementrix.it';
+            const apiUrl = `https://api.mcstatus.io/v2/status/java/${serverIp}`;
+
+            const statusEl = document.getElementById('status');
+            const playersEl = document.getElementById('players');
+            const versionEl = document.getElementById('version');
+            const motdEl = document.getElementById('motd');
+            const serverInfoEl = document.getElementById('server-info');
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+
+            loadingEl.style.display = 'block';
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loadingEl.style.display = 'none';
+
+                    if (data.online) {
+                        serverInfoEl.style.display = 'block';
+                        statusEl.textContent = 'Online';
+                        statusEl.className = 'online';
+                        playersEl.textContent = `${data.players.online} / ${data.players.max}`;
+                        versionEl.textContent = data.version.name_clean;
+                        motdEl.innerHTML = data.motd.html;
+                    } else {
+                        errorEl.style.display = 'block';
+                        statusEl.textContent = 'Offline';
+                        statusEl.className = 'offline';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching Minecraft server status:', error);
+                    loadingEl.style.display = 'none';
+                    errorEl.style.display = 'block';
+                    serverInfoEl.style.display = 'none';
+                });
+        });
+    </script>
+</body>
+</html>
