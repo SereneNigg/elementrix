@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elementrix - Server Status</title>
     <link rel="icon" type="image/png" href="media/favicon.png">
-    <link rel="stylesheet" href="status.css">
+    <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <div class="background-overlay"></div>
+
     <nav class="desktop_navbar">
       <a href="#"><img class="desktop_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
       <a href="https://elementrix.tebex.io/" class="desktop_navbar_link">Store</a>
@@ -35,26 +36,45 @@
     </div>
 
     <main class="content">
-        <div id="server-status-container">
-            <h1>Server Status</h1>
-            <div id="server-info">
-                <p><strong>Status:</strong> <span id="status">Loading...</span></p>
-                <p><strong>Players:</strong> <span id="players">N/A</span></p>
-                <p><strong>Version:</strong> <span id="version">N/A</span></p>
-                <div class="motd-container">
-                    <strong>MOTD:</strong>
-                    <pre id="motd">Loading...</pre>
+        <div class="status-card">
+            <div class="card-header">
+                <div>
+                    <h2>Elementrix Network</h2>
+                    <p class="server-ip">play.elementrix.it</p>
+                </div>
+                <div class="status-indicator">
+                    <div id="status-dot" class="loading"></div>
+                    <span id="status">Pinging...</span>
                 </div>
             </div>
-            <div id="loading" style="display: none;">
-                <p>Fetching server data...</p>
-            </div>
-            <div id="error" style="display: none;">
-                <p>Could not retrieve server information. The server may be offline or the API is unavailable.</p>
+
+            <div class="card-body">
+                <div class="info-section">
+                    <h3>Players</h3>
+                    <div class="player-count">
+                        <span id="players">-- / --</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>Version</h3>
+                    <p id="version">--</p>
+                </div>
+
+                <div class="motd-section">
+                    <h3>MOTD</h3>
+                    <div class="motd-container">
+                        <pre id="motd">Loading server message...</pre>
+                    </div>
+                </div>
+                 <div id="error" style="display: none;">
+                    <p>Could not retrieve server information. The server is likely offline.</p>
+                </div>
             </div>
         </div>
     </main>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         function mobile_navbar_link_hider() {
             var x = document.getElementById("mobile_navbar_links");
@@ -70,43 +90,38 @@
             const apiUrl = `https://api.mcstatus.io/v2/status/java/${serverIp}`;
 
             const statusEl = document.getElementById('status');
+            const statusDot = document.getElementById('status-dot');
             const playersEl = document.getElementById('players');
             const versionEl = document.getElementById('version');
             const motdEl = document.getElementById('motd');
-            const serverInfoEl = document.getElementById('server-info');
-            const loadingEl = document.getElementById('loading');
             const errorEl = document.getElementById('error');
 
-            loadingEl.style.display = 'block';
-
             fetch(apiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    loadingEl.style.display = 'none';
-
                     if (data.online) {
-                        serverInfoEl.style.display = 'block';
                         statusEl.textContent = 'Online';
-                        statusEl.className = 'online';
+                        statusDot.className = 'online';
+
                         playersEl.textContent = `${data.players.online} / ${data.players.max}`;
                         versionEl.textContent = data.version.name_clean;
                         motdEl.innerHTML = data.motd.html;
+
                     } else {
-                        errorEl.style.display = 'block';
                         statusEl.textContent = 'Offline';
-                        statusEl.className = 'offline';
+                        statusDot.className = 'offline';
+                        errorEl.style.display = 'block';
+                        playersEl.textContent = 'N/A';
+                        versionEl.textContent = 'N/A';
+                        motdEl.textContent = 'Server is offline.';
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching Minecraft server status:', error);
-                    loadingEl.style.display = 'none';
+                    statusEl.textContent = 'Error';
+                    statusDot.className = 'offline';
                     errorEl.style.display = 'block';
-                    serverInfoEl.style.display = 'none';
+                    errorEl.textContent = 'An error occurred while trying to ping the server.';
                 });
         });
     </script>
