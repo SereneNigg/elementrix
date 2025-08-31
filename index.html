@@ -11,6 +11,67 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+    <!-- Login Button (Top Right Corner) -->
+<div id="login-container">
+  <button id="login-btn">Login</button>
+</div>
+
+<!-- Login Modal -->
+<div id="login-modal" class="modal">
+  <div class="modal-content">
+    <span id="close-modal">&times;</span>
+    <h2>Login</h2>
+    <input type="text" id="username-input" placeholder="Enter Minecraft username">
+    <button id="submit-login">Login</button>
+    <p id="login-error"></p>
+  </div>
+</div>
+<script>
+const modal = document.getElementById("login-modal");
+const loginBtn = document.getElementById("login-btn");
+const closeModal = document.getElementById("close-modal");
+const submitLogin = document.getElementById("submit-login");
+const loginError = document.getElementById("login-error");
+
+loginBtn.onclick = () => modal.style.display = "block";
+closeModal.onclick = () => modal.style.display = "none";
+window.onclick = (event) => { if (event.target === modal) modal.style.display = "none"; };
+
+submitLogin.onclick = async () => {
+  const username = document.getElementById("username-input").value.trim();
+  if (!username) {
+    loginError.textContent = "Please enter your username!";
+    return;
+  }
+  loginError.textContent = "Logging in...";
+
+  try {
+    const response = await fetch(`http://uk-01.acenodes.co.uk:YOUR_PORT/api/player?player=${username}`, {
+      headers: { "X-API-Key": "acenodes" }
+    });
+
+    if (!response.ok) throw new Error("Invalid response from API");
+
+    const data = await response.json();
+    const player = data.data;
+
+    // Replace login button with user info
+    document.getElementById("login-container").innerHTML = `
+      <div id="user-info">
+        <h3>${player.playerName}</h3>
+        <p><b>Rank:</b> ${player.rank}</p>
+        <p><b>Balance:</b> $${player.balance.toLocaleString()}</p>
+        <p><b>Playtime:</b> ${player.playtimeFormatted}</p>
+      </div>
+    `;
+    modal.style.display = "none";
+  } catch (err) {
+    loginError.textContent = "Login failed. Try again.";
+    console.error(err);
+  }
+};
+</script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <nav class="desktop_navbar">
       <a href="#"><img class="desktop_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
@@ -215,16 +276,7 @@
   <button id="login-btn">Login</button>
 </div>
 
-<!-- Login Modal -->
-<div id="login-modal" class="modal">
-  <div class="modal-content">
-    <span id="close-modal">&times;</span>
-    <h2>Login</h2>
-    <input type="text" id="username-input" placeholder="Enter Minecraft username">
-    <button id="submit-login">Login</button>
-    <p id="login-error"></p>
-  </div>
-</div>
+
 
 
         </div>
