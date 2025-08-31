@@ -46,7 +46,7 @@ submitLogin.onclick = async () => {
   loginError.textContent = "Logging in...";
 
   try {
-    const response = await fetch(`http://uk-01.acenodes.co.uk:YOUR_PORT/api/player?player=${username}`, {
+    const response = await fetch(`http://uk-01.acenodes.co.uk:25638/api/player?player=${username}`, {
       headers: { "X-API-Key": "acenodes" }
     });
 
